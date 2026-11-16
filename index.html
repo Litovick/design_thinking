@@ -19,12 +19,12 @@ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go)
 function inferRole(p){if(p.role!=='auto')return p.role;const s=p.major.toLowerCase();if(/간호|사회복지|보건/.test(s))return'welfare';if(/식품|조리|외식/.test(s))return'food';if(/바이오|생명|화학|제약|의공/.test(s))return'bio';if(/미디어|디자인|영상|광고|콘텐츠/.test(s))return'media';if(/컴퓨터|데이터|소프트웨어|정보통신|통계/.test(s))return'data';if(/교육|교직/.test(s))return'education';if(/관광|호텔|항공/.test(s))return'tourism';if(/경영|경제|회계|금융/.test(s))return'business';if(/기계|전기|전자|환경|건축/.test(s))return'engineering';if(/체육|스포츠|레저/.test(s))return'sports';if(/행정|정치|정책/.test(s))return'public';return'culture'}
 function makeMap(p){
 const key=inferRole(p),r=roles[key],level=p.year.startsWith('1')?1:p.year.startsWith('2')?2:p.year.startsWith('3')?3:4;
-const roleChoices=r.examples,roleKey='careerRole_'+key;
+const selectedJob=(()=>{try{return JSON.parse(localStorage.getItem('careerSelectedJob')||'null')}catch{return null}})();const inField=selectedJob&&(careerCatalog[key]||[]).some(c=>c.id===selectedJob.id);const roleChoices=inField?[selectedJob.name,...r.examples.filter(n=>n!==selectedJob.name)]:r.examples,roleKey='careerRole_'+key;
 const storedChoice=localStorage.getItem(roleKey);
 let chosenRole=roleChoices.includes(storedChoice)?storedChoice:roleChoices[0];
 const tasks=[
-['희망 직무 1개 선택','직무의 실제 업무 3가지 조사','직무별 채용 요건 확인'],
-[r.prep[0],r.prep[1],r.prep[2]],
+inField?['선택 직업: '+selectedJob.name,selectedJob.tasks[0]+' 업무 이해',selectedJob.skills[0]+' 역량 요건 확인']:['희망 직무 1개 선택','직무의 실제 업무 3가지 조사','직무별 채용 요건 확인'],
+inField?selectedJob.steps.slice(0,3):[r.prep[0],r.prep[1],r.prep[2]],
 ['고용24에서 춘천 지역 필터 적용','춘천 관련 공고 또는 기관 2곳 기록','현장실습·프로젝트 기회 확인'],
 ['춘천 공고의 실제 조건 확인','연봉·주거비·통근 조건 비교','진학·타 지역 대안도 비교']
 ];
